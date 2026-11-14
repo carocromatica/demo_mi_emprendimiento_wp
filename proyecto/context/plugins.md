@@ -1,24 +1,54 @@
-# Hacer que el tema brotheme-shop sea compatible con los plugins
+# plugins: instrucciones para el agente
 
-Instrucciones para que el tema propio funcione con los plugins del proyecto. Un plugin no cambia el diseño por sí solo: el tema debe dejarle los "ganchos" que necesita y darle estilo al resultado.
+Eres un agente de código (Antigravity). Tu tarea es dejar el tema `brotheme-shop` **compatible con los plugins del proyecto**. Un plugin no cambia el diseño por sí solo: el tema debe darle los ganchos que necesita y estilizar su resultado. Este archivo se usa después de `html-to-theme.md` (hito 5) o sobre un tema ya creado.
 
-## Lo que todo plugin necesita del tema
+## Objetivo
 
-Si falta alguno de estos, muchos plugins fallan sin avisar:
+Que el tema funcione sin errores con **Yoast SEO, Contact Form 7, Akismet, Newsletter y All-in-One WP Migration**, conservando el diseño de Brote.
 
-| Requisito | Dónde |
-|---|---|
-| `<?php wp_head(); ?>` antes de `</head>` | `header.php` |
-| `<?php wp_footer(); ?>` antes de `</body>` | `footer.php` |
-| `<body <?php body_class(); ?>>` | `header.php` |
-| `add_theme_support( 'title-tag' )` | `functions.php` |
-| Estilos y scripts con `wp_enqueue_style` y `wp_enqueue_script` | `functions.php` |
-| Sin `<title>` fijo ni `<meta name="description">` fijo | `header.php` |
+## Entradas
 
-## 1. Yoast SEO (SEO, obligatorio)
+- `brotheme-shop/`: el tema a ajustar.
+- `proyecto/html/css/styles.css` y `proyecto/html/contacto.html`: clases y estructura del formulario de contacto y de la captación de correos del diseño.
+- `proyecto/decisiones.md`: plugins elegidos.
 
-- Yoast escribe el título, la descripción y las etiquetas sociales con `wp_head()`. Borra del HTML cualquier `<title>` y `<meta name="description">` fijo.
-- Migas de pan (opcional): activa "Migas de pan" en Yoast y pon en la plantilla:
+## Salida
+
+Cambios solo dentro de `brotheme-shop/` y un bloque "Plugins" en el README del repo con la configuración que debe hacer la estudiante desde el panel de WordPress (lo que no se puede dejar en código).
+
+## Reglas (no las rompas)
+
+1. **No instales ni descargues plugins.** Solo prepara el tema. La estudiante los instala desde el panel.
+2. **No toques archivos de plugins** ni `wp-content/plugins/`. Todo ajuste va en el tema.
+3. **No cambies el diseño.** Si un plugin imprime HTML propio, estilízalo con CSS para que calce; no reescribas la página.
+4. **Nada de rutas ni URL fijas del sitio.** Usa `home_url()`, `get_permalink()` y `get_template_directory_uri()`.
+5. **Escapa todo lo que imprimas:** `esc_html()`, `esc_attr()`, `esc_url()`.
+6. **Cambios pequeños en `functions.php`** y revisión de sintaxis (`php -l`) después de cada edición.
+7. **Prefijo `brotheme_`** en funciones y handles.
+8. **Un commit por hito**, con mensaje en español.
+
+## Procedimiento
+
+### Hito 1: requisitos generales del tema
+
+Verifica, y corrige si falta, cada punto. Si uno no se cumple, muchos plugins fallan sin avisar.
+
+| Requisito | Dónde | Cómo verificar |
+|---|---|---|
+| `<?php wp_head(); ?>` antes de `</head>` | `header.php` | `grep -n "wp_head" brotheme-shop/header.php` |
+| `<?php wp_footer(); ?>` antes de `</body>` | `footer.php` | `grep -n "wp_footer" brotheme-shop/footer.php` |
+| `<body <?php body_class(); ?>>` | `header.php` | `grep -n "body_class" brotheme-shop/header.php` |
+| `add_theme_support( 'title-tag' )` | `functions.php` | `grep -n "title-tag" brotheme-shop/functions.php` |
+| Estilos y scripts con `wp_enqueue_style` y `wp_enqueue_script` | `functions.php` | Sin `<link>` ni `<script>` pegados en las plantillas |
+| Sin `<title>` ni `<meta name="description">` fijos | `header.php` | `grep -n "<title\|name=\"description\"" brotheme-shop/header.php` no devuelve nada |
+
+**Criterio:** los seis requisitos se cumplen.
+**Commit:** `Plugins: requisitos generales del tema`.
+
+### Hito 2: Yoast SEO
+
+1. Confirma que no hay `<title>` ni `<meta name="description">` fijos (hito 1).
+2. Si el diseño tiene migas de pan, imprímelas con Yoast en las plantillas donde aparezcan (`single.php`, `archive.php`, `page.php`, páginas de tienda):
 
 ```php
 <?php
@@ -28,26 +58,31 @@ if ( function_exists( 'yoast_breadcrumb' ) ) {
 ?>
 ```
 
-- Cada página y entrada usa un solo `<h1>` (el `the_title()`).
-- Las imágenes llevan `alt`; en entradas se imprime con `the_post_thumbnail()`.
-- Completa en cada entrada la palabra clave y la descripción desde el cuadro de Yoast.
+Usa la clase que ya tenga el HTML original para las migas. La función solo imprime si la estudiante activa "Migas de pan" en Yoast, y no rompe nada si el plugin no está instalado.
 
-## 2. Contact Form 7 (contacto, obligatorio)
+3. Verifica que cada plantilla tenga un solo `<h1>` (el título de la página o entrada con `the_title()`).
+4. Verifica que toda imagen impresa por PHP tenga `alt` (`the_post_thumbnail()` lo maneja; en imágenes del tema escribe un `alt` descriptivo).
 
-- Crea el formulario en Contactos, Formularios, con el título **Contacto** y los campos del diseño: nombre, correo, asunto y mensaje.
-- En `page-contacto.php`, en el lugar del formulario del HTML:
+**Criterio:** una sola etiqueta `<h1>` por plantilla; sin `<title>` fijo; migas con `function_exists`.
+**Commit:** `Plugins: compatibilidad con Yoast SEO`.
+
+### Hito 3: Contact Form 7
+
+1. En `page-contacto.php`, en el lugar del formulario del HTML original, imprime:
 
 ```php
 <?php echo do_shortcode( '[contact-form-7 title="Contacto"]' ); ?>
 ```
 
-Usa el `title` y no el `id`: el id cambia entre instalaciones.
+Usa `title` y no `id`: el id cambia entre instalaciones.
 
-- Para conservar el diseño, escribe el formulario en CF7 con las mismas clases del HTML:
+2. Crea el archivo `proyecto/context/contacto-cf7.txt` con el contenido del formulario para que la estudiante lo pegue en CF7. Usa las mismas clases del HTML original:
 
 ```html
 <label class="campo">Nombre
   [text* tu-nombre class:input]</label>
+<label class="campo">Correo
+  [email* tu-correo class:input]</label>
 <label class="campo">Asunto
   [select* tu-asunto class:input "Consulta" "Pedido" "Otro"]</label>
 <label class="campo">Mensaje
@@ -55,68 +90,108 @@ Usa el `title` y no el `id`: el id cambia entre instalaciones.
 [submit class:boton "Enviar"]
 ```
 
-- Dale estilo a lo que CF7 agrega: `.wpcf7-form`, `.wpcf7-not-valid-tip`, `.wpcf7-response-output`, `.wpcf7-spinner`.
-- En la pestaña Correo pon el correo del emprendimiento en "Para". Prueba el envío (en InfinityFree el correo puede demorar o fallar; ver "Correo" más abajo).
+Ajusta los nombres de clase (`campo`, `input`, `boton`) a las que realmente use `contacto.html`; léelo antes de escribir.
 
-## 3. Akismet (antispam)
+3. Agrega a `assets/css/styles.css` estilos para lo que CF7 imprime, con las variables y colores ya existentes: `.wpcf7-form`, `.wpcf7-not-valid-tip`, `.wpcf7-response-output`, `.wpcf7-spinner`.
 
-- Instálalo, actívalo y conecta una clave gratuita (uso personal).
-- Protege los comentarios y los envíos de Contact Form 7.
-- Para que los comentarios del blog funcionen, `single.php` debe llamar:
+**Criterio:** la plantilla usa el shortcode por título; existe el archivo del formulario con clases reales del diseño; los estilos de `.wpcf7-*` están en el CSS.
+**Commit:** `Plugins: Contact Form 7 en Contacto`.
+
+### Hito 4: Akismet y comentarios
+
+1. En `single.php`, después del contenido, imprime los comentarios:
 
 ```php
-<?php if ( comments_open() || get_comments_number() ) { comments_template(); } ?>
+<?php
+if ( comments_open() || get_comments_number() ) {
+	comments_template();
+}
+?>
 ```
 
-- Si usas un `comments.php` propio, imprime los comentarios con `wp_list_comments()` y el formulario con `comment_form()`.
-- `add_theme_support( 'html5', array( 'comment-form', 'comment-list' ) )` ya viene en `functions.php`.
+2. Si el tema no tiene `comments.php`, créalo con `wp_list_comments()` para la lista y `comment_form()` para el formulario, con las clases del diseño. Si ya existe, déjalo.
+3. Confirma que `functions.php` tiene `add_theme_support( 'html5', array( 'comment-form', 'comment-list' ) )`.
+4. Agrega estilos para la lista y el formulario de comentarios en el CSS.
 
-## 4. Newsletter (suscripción por correo)
+Akismet no necesita código en el tema: filtra los comentarios y los envíos de CF7 una vez que la estudiante lo activa y conecta su clave.
 
-- Instálalo y crea el formulario de suscripción desde el plugin.
-- Pega el formulario donde el diseño tiene la captación (Inicio y Artículo):
+**Criterio:** `single.php` llama `comments_template()`; existe `comments.php` con `wp_list_comments()` y `comment_form()`.
+**Commit:** `Plugins: comentarios y Akismet`.
+
+### Hito 5: Newsletter
+
+1. En `front-page.php` y `single.php`, donde el diseño tiene el bloque de captación de correos, reemplaza el formulario fijo por:
 
 ```php
 <?php echo do_shortcode( '[newsletter_form]' ); ?>
 ```
 
-- Si el diseño ya tiene su propio formulario, copia sus clases al formulario del plugin y estiliza `.tnp-subscription` y sus campos (`.tnp-field`, `.tnp-submit`).
-- Activa la casilla de consentimiento y la confirmación por correo.
-- Muestra el enlace de la guía gratuita y el código del 10 % en el mensaje de "gracias" de la misma página. Así no dependes de que el correo llegue.
+Conserva el título, el texto y el contenedor del bloque original; reemplaza solo el `<form>`.
 
-## 5. All-in-One WP Migration (respaldo y migración)
+2. Agrega a `assets/css/styles.css` estilos para el formulario del plugin (`.tnp-subscription`, `.tnp-field`, `.tnp-submit`) para que calce con el diseño.
+3. Revisa los nombres de clase reales en el HTML que genera el plugin; si no coinciden con los de arriba, ajusta los selectores. Si no puedes verificarlo sin WordPress, déjalo anotado en el resumen final.
 
-- El tema debe quedar en el respaldo y reinstalarse en otro servidor sin romperse. Para eso:
-  - ninguna URL fija (`http://...` del sitio), solo `home_url()` y `get_template_directory_uri()`;
-  - ninguna ruta absoluta del servidor.
-- Para respaldar: Exportar, Exportar a, Archivo. Se descarga un `.wpress`.
-- Para reinstalar: instala WordPress limpio, instala el mismo plugin, Importar y sube el `.wpress`.
-- La versión gratis limita el tamaño de importación según el hosting. Comprime las imágenes para que el respaldo no crezca de más.
-- Guarda un respaldo al cerrar cada etapa y documenta estos pasos en el README del sitio.
+**Criterio:** el bloque de captación usa el shortcode en las dos plantillas; hay estilos para el formulario del plugin.
+**Commit:** `Plugins: formulario de Newsletter`.
+
+### Hito 6: All-in-One WP Migration (respaldo)
+
+El tema debe sobrevivir a una exportación e importación en otro servidor. Verifica en todo `brotheme-shop/`:
+
+| Revisión | Comando | Resultado esperado |
+|---|---|---|
+| Sin URL fijas del sitio | `grep -rn "http://\|https://" brotheme-shop --include=*.php` | Solo URL externas legítimas (fuentes, redes), nunca el dominio del sitio |
+| Sin rutas absolutas del servidor | `grep -rn "/home/\|/var/www\|C:\\\\" brotheme-shop` | Sin resultados |
+| Sin `localhost` | `grep -rn "localhost" brotheme-shop` | Sin resultados |
+| Sin imágenes con ruta relativa | `grep -rn 'src="img/\|src="/img/' brotheme-shop` | Sin resultados |
+
+Corrige cada hallazgo con `home_url()` o `get_template_directory_uri()`.
+
+**Criterio:** las cuatro revisiones salen limpias.
+**Commit:** `Plugins: tema sin URL fijas para migrar`.
+
+### Hito 7: README y verificación
+
+1. Revisa la sintaxis de todos los PHP (`php -l`), si está disponible.
+2. Agrega al README del repo un bloque "Plugins" con lo que la estudiante hace desde el panel:
+   - **Yoast SEO:** activar migas de pan; completar palabra clave y descripción de cada página y entrada.
+   - **Contact Form 7:** crear el formulario con título `Contacto` y pegar el contenido de `contacto-cf7.txt`; poner el correo del emprendimiento en "Para".
+   - **Akismet:** activar y conectar una clave gratuita (uso personal).
+   - **Newsletter:** crear el formulario de suscripción, activar la casilla de consentimiento y la confirmación por correo; poner el enlace de la guía y el código del 10 % en el mensaje de "gracias".
+   - **All-in-One WP Migration:** exportar a archivo (`.wpress`) al cerrar cada etapa; para reinstalar, instalar WordPress limpio y el mismo plugin e importar el archivo.
+3. Agrega la nota del correo en InfinityFree (abajo).
+
+**Criterio:** los PHP pasan la revisión y el README tiene el bloque "Plugins".
+**Commit:** `Plugins: documentación en el README`.
 
 ## Correo en InfinityFree
 
-El hosting limita el correo que sale del servidor. Si CF7 o Newsletter no envían:
+El hosting limita el correo que sale del servidor. No puedes arreglarlo desde el tema. Deja esta nota en el README:
 
-1. Revisa la carpeta de spam.
-2. Instala WP Mail SMTP y configúralo con una cuenta de correo propia.
-3. Como plan B, deja el correo del emprendimiento visible en la página de Contacto.
+1. Si CF7 o Newsletter no envían, revisar la carpeta de spam.
+2. Instalar WP Mail SMTP y configurarlo con una cuenta de correo propia.
+3. Como plan B, dejar el correo del emprendimiento visible en la página de Contacto.
 
-## Plugins opcionales
+## Plugins opcionales (solo si la estudiante los eligió en `decisiones.md`)
 
-| Plugin | Qué necesita el tema |
+| Plugin | Qué hacer en el tema |
 |---|---|
-| WP Mail SMTP | Nada; configúralo desde el panel |
-| Joinchat (WhatsApp) | `wp_footer()` presente |
-| WP Super Cache | Estilos y scripts bien encolados; vacía el caché al cambiar el tema |
-| Smush o EWWW Image Optimizer | Imágenes subidas a la biblioteca de medios, no pegadas en el tema |
-| Relevanssi | Un `searchform.php` o `get_search_form()` y un `search.php` |
-| CookieYes | `wp_footer()` presente |
+| WP Mail SMTP | Nada en el tema; se configura desde el panel |
+| Joinchat (WhatsApp) | Verificar `wp_footer()` |
+| WP Super Cache | Verificar que estilos y scripts estén bien encolados |
+| Smush o EWWW Image Optimizer | Nada en el tema; las imágenes de contenido van a la biblioteca de medios |
+| Relevanssi | Agregar `searchform.php` (o `get_search_form()`) y `search.php` con el diseño del buscador |
+| CookieYes | Verificar `wp_footer()` |
 
-## Probar la compatibilidad
+## Cuándo detenerte y preguntar
 
-1. Activa los plugins uno por uno y revisa el sitio tras cada uno.
-2. Si aparece una pantalla blanca, renombra la carpeta del plugin por FTP para desactivarlo.
-3. Revisa que no haya errores en la consola del navegador (F12).
-4. Comprueba: título y descripción por página (Yoast), envío del formulario (CF7), comentario de prueba (Akismet), suscripción de prueba (Newsletter) y un respaldo exportado (All-in-One).
-5. Corre Lighthouse con los plugins activos.
+Detente y pregunta a la estudiante, sin adivinar, si:
+
+- el HTML original no tiene un formulario de contacto o un bloque de captación de correos que reemplazar;
+- el diseño del formulario necesita campos que CF7 no puede generar;
+- tienes que cambiar el diseño para que un plugin funcione;
+- necesitas un plugin que no está en `decisiones.md`.
+
+## Al terminar
+
+Entrega un resumen corto con: los archivos cambiados, lo que dejaste listo para configurar desde el panel, lo que no pudiste verificar sin WordPress instalado (por ejemplo las clases reales que imprime Newsletter) y cualquier duda abierta.
