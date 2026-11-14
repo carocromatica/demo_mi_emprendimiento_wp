@@ -1,6 +1,6 @@
 # plugins: instrucciones para el agente
 
-Eres un agente de código (Antigravity). Tu tarea es dejar el tema `brotheme-shop` **compatible con los plugins del proyecto**. Un plugin no cambia el diseño por sí solo: el tema debe darle los ganchos que necesita y estilizar su resultado. Este archivo se usa después de `html-to-theme.md` (hito 5) o sobre un tema ya creado.
+Tu tarea es dejar el tema `brotheme-shop` **compatible con los plugins del proyecto**. Un plugin no cambia el diseño por sí solo: el tema debe darle los ganchos que necesita y estilizar su resultado. Este archivo se usa después de `html-to-theme.md` (hito 5) o sobre un tema ya creado.
 
 ## Objetivo
 

@@ -1,6 +1,6 @@
 # html-to-theme: instrucciones para el agente
 
-Eres un agente de código (Antigravity). Tu tarea es convertir el sitio HTML estático de **Brote** en un **tema clásico de WordPress en PHP** llamado `brotheme-shop`. Lee este archivo completo antes de escribir código y síguelo en orden.
+Tu tarea es convertir el sitio HTML estático de **Brote** en un **tema clásico de WordPress en PHP** llamado `brotheme-shop`. Lee este archivo completo antes de escribir código y síguelo en orden.
 
 ## Objetivo
 
