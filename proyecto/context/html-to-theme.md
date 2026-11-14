@@ -150,7 +150,7 @@ add_action( 'after_setup_theme', 'brotheme_woocommerce' );
 | `tienda.html` | `woocommerce/archive-product.php` y `woocommerce/content-product.php` | Cabecera, categorías, migas, orden y tarjetas de producto del diseño |
 | `producto.html` | `woocommerce/single-product.php` y `woocommerce/content-single-product.php` | Galería, precio, selector de formato (producto variable), acordeones y relacionados |
 | `carrito.html` | `woocommerce/cart/cart.php`, `woocommerce/cart/cart-empty.php` y `woocommerce/cart/cart-totals.php` | Líneas con cantidades, resumen, estado vacío y sugerencias |
-| Pago | `woocommerce/checkout/form-checkout.php` | Solo si el diseño del pago está definido; si no, déjalo con el estilo base |
+| Pago | `woocommerce/checkout/form-checkout.php` y `woocommerce/checkout/payment.php` | Conserva el bloque de medios de pago de WooCommerce (`woocommerce_checkout_payment`): ahí se muestra Mercado Pago. Si el diseño del pago no está definido, déjalo con el estilo base |
 
 3. Si el contenedor de WooCommerce no calza con el diseño, reemplaza los envoltorios en `functions.php`:
 
@@ -221,5 +221,5 @@ Esto no se puede dejar en código. Déjalo escrito en `proyecto/context/woocomme
 3. **Atributo "Tipo de planta"** (interior, exterior, suculentas, huerto): sirve para filtrar y para mostrar para qué plantas sirve cada producto.
 4. **Productos variables:** el formato (5 L, 10 L, 20 L) es un atributo "Formato" usado para variaciones, cada una con su precio.
 5. **Despacho:** zonas de envío con tarifa fija por región y la opción "Retiro en tienda" del local, para que el costo se vea en el carrito antes de pagar.
-6. **Pago:** transferencia bancaria para empezar; Webpay o Mercado Pago quedan como mejora con su plugin oficial.
+6. **Pago:** instalar el plugin Mercado Pago payments for WooCommerce, conectar la cuenta de Mercado Pago (credenciales de pruebas primero), activar el modo de pruebas (sandbox) y probar un pago antes de pasar a producción. Deja la transferencia bancaria como medio alternativo.
 7. **Páginas:** Tienda, Carrito, Finalizar compra y Mi cuenta, asignadas en WooCommerce, Ajustes, Avanzado.

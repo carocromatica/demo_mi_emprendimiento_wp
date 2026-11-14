@@ -4,7 +4,7 @@
 
 ## 1. Plugins (10 pts)
 
-Seis plugins, cada uno resuelve una funcionalidad de `docs/03-funcionalidades.md`. Los tres primeros son del curso y el cuarto es un respaldo que ya uso; el quinto cubre la captación de correos, que es el objetivo secundario del sitio. Guía: `guia-investigar-plugins.md`.
+Siete plugins, cada uno resuelve una funcionalidad de `docs/03-funcionalidades.md`. Los tres primeros son del curso y el cuarto es un respaldo que ya uso; el quinto cubre la captación de correos, que es el objetivo secundario del sitio. Guía: `guia-investigar-plugins.md`.
 
 | # | Funcionalidad | Plugin | Gratis o de pago | Qué incluye la versión gratis | Probado hasta (WP) | Requiere PHP | ¿Funciona con tema propio? | Enlace a la ficha |
 |---|---|---|---|---|---|---|---|---|
@@ -13,11 +13,12 @@ Seis plugins, cada uno resuelve una funcionalidad de `docs/03-funcionalidades.md
 | 3 | Comentar artículos sin llenarse de spam (blog, "Deseable") | Akismet | Gratis para uso personal | Filtro antispam de comentarios y de los envíos de Contact Form 7, con panel de spam | 7.1.4 | 7.2 | Sí: funciona sobre los comentarios de WordPress, sin tocar el tema | [wordpress.org/plugins/akismet](https://wordpress.org/plugins/akismet/) |
 | 4 | Respaldo y migración del sitio (para reinstalar en otro servidor) | All-in-One WP Migration | Gratis (con extensiones de pago) | Exporta el sitio completo (archivos y base de datos) a un solo archivo `.wpress` y lo importa en otro WordPress | 7.1.4 | 5.3 | Sí: respalda el tema propio junto con todo el sitio | [wordpress.org/plugins/all-in-one-wp-migration](https://wordpress.org/plugins/all-in-one-wp-migration/) |
 | 5 | Dejar el correo a cambio de la guía de cuidados y el 10 % (imprescindible) | Newsletter | Gratis (con extensiones de pago) | Formulario de suscripción por shortcode, lista de suscriptores dentro de WordPress, doble confirmación y envío de correos | 7.1.4 | 7.0 | Sí: el formulario se inserta con shortcode en Inicio y en el artículo | [wordpress.org/plugins/newsletter](https://wordpress.org/plugins/newsletter/) |
-| 6 | Vender online: catálogo, ficha con formato, carrito y despacho (imprescindible) | WooCommerce | Gratis (con extensiones de pago) | Productos simples y variables, categorías, atributos, carrito, finalizar compra, zonas de envío y transferencia bancaria | 7.1.4 | 7.4 | Sí: el tema declara `add_theme_support( 'woocommerce' )` y reemplaza las plantillas en su carpeta `woocommerce/` | [wordpress.org/plugins/woocommerce](https://wordpress.org/plugins/woocommerce/) |
+| 6 | Vender online: catálogo, ficha con formato, carrito y despacho (imprescindible) | WooCommerce | Gratis (con extensiones de pago) | Productos simples y variables, categorías, atributos, carrito, finalizar compra, zonas de envío y transferencia bancaria (el pago con tarjeta lo da Mercado Pago) | 7.1.4 | 7.4 | Sí: el tema declara `add_theme_support( 'woocommerce' )` y reemplaza las plantillas en su carpeta `woocommerce/` | [wordpress.org/plugins/woocommerce](https://wordpress.org/plugins/woocommerce/) |
+| 7 | Pagar online con tarjeta o saldo de Mercado Pago (imprescindible) | Mercado Pago payments for WooCommerce | Gratis (cobra comisión por venta a Mercado Pago) | Pago con tarjetas, Mercado Pago y otros medios, en modo de pruebas (sandbox) y en producción, integrado al finalizar compra | 7.1.4 | 7.4 | Sí: se integra al checkout de WooCommerce; el tema solo debe conservar los hooks del pago | [wordpress.org/plugins/woocommerce-mercadopago](https://wordpress.org/plugins/woocommerce-mercadopago/) |
 
 Datos de "Probado hasta" y "Requiere PHP" tomados de la ficha de cada plugin en WordPress.org.
 
-**Plugins que descarté por ahora:** BackWPup (uso All-in-One WP Migration, que me deja exportar e importar el sitio con un solo archivo). La pasarela de pago (Webpay o Mercado Pago) queda para el plan de continuidad; por ahora la tienda cobra por transferencia bancaria.
+**Plugins que descarté por ahora:** BackWPup (uso All-in-One WP Migration, que me deja exportar e importar el sitio con un solo archivo) y Webpay (cobro con Mercado Pago).
 
 ### Otros plugins que podrías considerar
 
@@ -57,7 +58,7 @@ Opciones para elegir tus otros plugins según lo que necesite tu sitio. Aquí no
 | Identidad visual | 5 nov | 8 nov | Pasar `styles.css`, colores y tipografías a `style.css` y `functions.php` |
 | Home | 9 nov | 11 nov | `front-page.php`, `header.php` y `footer.php` |
 | Páginas | 12 nov | 16 nov | Contacto, Nosotros y Preguntas frecuentes; blog con `index.php` y `single.php` |
-| Plugins | 14 nov | 17 nov | Yoast, Contact Form 7, Akismet, Newsletter, WooCommerce y All-in-One WP Migration |
+| Plugins | 14 nov | 17 nov | Yoast, Contact Form 7, Akismet, Newsletter, WooCommerce, Mercado Pago y All-in-One WP Migration |
 | **Checkpoint (18 nov)** | | 18 nov | Revisar con el docente y corregir si hace falta |
 | Ajustes y formulario | 19 nov | 24 nov | Formulario de contacto con asunto, Lighthouse y README de respaldo |
 | **Entrega final (25 nov)** | | 25 nov | Sitio en producción y plan de continuidad |
@@ -84,4 +85,4 @@ gantt
 | El tema propio no funciona o se rompe | Vuelvo al último commit que funcionaba y subo ese `.zip`; si no alcanza, uso `tema-base/` con los estilos de Brote encima. | Pantalla blanca al activar el tema, o si el 16 nov Inicio no se ve bien en WordPress |
 | Un plugin falla o no es compatible | Lo desactivo, pruebo la versión anterior desde WordPress.org y, si sigue fallando, lo reemplazo (Newsletter por un formulario de Contact Form 7). | Error al activarlo, formulario que no envía o aviso de PHP |
 | InfinityFree se cae o limita el sitio | Guardo un respaldo con All-in-One WP Migration cada vez que cierro una etapa para reinstalar el sitio en otro hosting gratuito. | Sitio caído más de un día o cuenta suspendida, antes del 25 nov |
-| No alcanzo a terminar todas las páginas | Entrego las 5 de la fase 1 y paso el resto (legales y pasarela de pago) al plan de continuidad. | Al llegar al checkpoint del 18 nov con menos de 3 páginas listas |
+| No alcanzo a terminar todas las páginas | Entrego las 5 de la fase 1 y paso el resto (legales) al plan de continuidad. | Al llegar al checkpoint del 18 nov con menos de 3 páginas listas |

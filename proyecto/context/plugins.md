@@ -4,7 +4,7 @@ Tu tarea es dejar el tema `brotheme-shop` **compatible con los plugins del proye
 
 ## Objetivo
 
-Que el tema funcione sin errores con **Yoast SEO, Contact Form 7, Akismet, Newsletter, WooCommerce y All-in-One WP Migration**, conservando el diseño de Brote.
+Que el tema funcione sin errores con **Yoast SEO, Contact Form 7, Akismet, Newsletter, WooCommerce, Mercado Pago y All-in-One WP Migration**, conservando el diseño de Brote.
 
 ## Entradas
 
@@ -196,7 +196,25 @@ add_filter( 'woocommerce_add_to_cart_fragments', function ( $fragments ) {
 **Criterio:** el soporte de WooCommerce está declarado; las plantillas conservan los hooks; el contador usa `function_exists( 'WC' )`; no hay JS del prototipo.
 **Commit:** `Plugins: compatibilidad con WooCommerce`.
 
-### Hito 8: README y verificación
+### Hito 8: Mercado Pago (pago)
+
+El plugin **Mercado Pago payments for WooCommerce** agrega los medios de pago al finalizar compra. El tema no lo configura: solo debe dejarle el lugar y el estilo.
+
+1. Verifica que `woocommerce/checkout/form-checkout.php` y `woocommerce/checkout/payment.php`, si existen en el tema, conserven los hooks `woocommerce_checkout_before_customer_details`, `woocommerce_checkout_order_review` y `woocommerce_checkout_payment`. Si se quitan, el pago no aparece.
+2. Verifica que `wp_footer()` esté presente: el plugin carga sus scripts del pago ahí.
+3. Agrega estilos para el bloque de pago (`.woocommerce-checkout-payment`, `.wc_payment_methods`, `.payment_box`, `#place_order`) con las variables y colores del diseño.
+4. No escribas código de pago, no pidas datos de tarjeta en el tema ni guardes credenciales: eso lo maneja el plugin.
+5. No escribas credenciales de Mercado Pago (Public Key, Access Token) en ningún archivo del repo. Deja en el README los pasos para que la estudiante las ingrese en el panel.
+6. Deja en el README del repo:
+   - crear la aplicación en Mercado Pago Developers y copiar las credenciales **de prueba**;
+   - en WooCommerce, Ajustes, Pagos, Mercado Pago: pegar las credenciales y activar el modo de pruebas (sandbox);
+   - hacer una compra de prueba con las tarjetas y usuarios de prueba que da Mercado Pago;
+   - pasar a producción solo con las credenciales reales y el sitio con HTTPS.
+
+**Criterio:** los hooks del pago están presentes; hay estilos para el bloque de pago; no hay credenciales en el repo.
+**Commit:** `Plugins: compatibilidad con Mercado Pago`.
+
+### Hito 9: README y verificación
 
 1. Revisa la sintaxis de todos los PHP (`php -l`), si está disponible.
 2. Agrega al README del repo un bloque "Plugins" con lo que la estudiante hace desde el panel:
@@ -205,6 +223,7 @@ add_filter( 'woocommerce_add_to_cart_fragments', function ( $fragments ) {
    - **Akismet:** activar y conectar una clave gratuita (uso personal).
    - **Newsletter:** crear el formulario de suscripción, activar la casilla de consentimiento y la confirmación por correo; poner el enlace de la guía y el código del 10 % en el mensaje de "gracias".
    - **WooCommerce:** seguir `proyecto/context/woocommerce-config.md` (país y moneda, categorías, atributos, productos variables, despacho, pago y páginas).
+   - **Mercado Pago:** crear la aplicación, ingresar las credenciales de prueba, activar sandbox y probar una compra (pasos del hito 8).
    - **All-in-One WP Migration:** exportar a archivo (`.wpress`) al cerrar cada etapa; para reinstalar, instalar WordPress limpio y el mismo plugin e importar el archivo.
 3. Agrega la nota del correo en InfinityFree (abajo).
 
