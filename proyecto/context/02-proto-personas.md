@@ -4,7 +4,7 @@
 
 ![Avatar ilustrado de Camila](img/camila.svg)
 
-**Camila Rojas, 29 años.** Diseñadora gráfica, trabaja en una oficina en Viña del Mar y vive en un departamento con balcón.
+**Camila Rojas, 29 años.** Diseñadora gráfica, trabaja en una oficina en Viña del Mar y vive en un departamento con balcón en Quilpué.
 
 > "Compro plantas preciosas y a los dos meses se me mueren."
 
@@ -35,7 +35,7 @@
 
 ## Segunda proto-persona (opcional)
 
-**Jorge Muñoz, 42 años.** Vive en su casa propia, que tiene patio, y quiere empezar a jardinear. El clima del interior le mata todas las plantas.
+**Jorge Muñoz, 42 años.** Vive en su casa propia con patio en Villa Alemana, y quiere empezar a jardinear. El clima del interior le mata todas las plantas.
 
 > "Quiero un patio verde, pero acá todo se me seca."
 
