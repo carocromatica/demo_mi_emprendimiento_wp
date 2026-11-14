@@ -219,7 +219,7 @@ Esto no se puede dejar en código. Déjalo escrito en `proyecto/context/woocomme
 1. **Asistente inicial:** país Chile, moneda peso chileno (CLP), sin plugins extra en el asistente.
 2. **Categorías de producto:** Sustratos, Fertilizantes, Plagas y enfermedades, Herramientas, Maceteros e Insumos.
 3. **Atributo "Tipo de planta"** (interior, exterior, suculentas, huerto): sirve para filtrar y para mostrar para qué plantas sirve cada producto.
-4. **Productos variables:** el formato (5 L, 10 L, 20 L) es un atributo "Formato" usado para variaciones, cada una con su precio.
+4. **Cantidad y formatos:** el diseño solo tiene selector de cantidad. Crea productos simples; usa productos variables (atributo "Formato") solo si un producto se vende en distintos tamaños.
 5. **Despacho:** zonas de envío con tarifa fija por región y la opción "Retiro en tienda" del local, para que el costo se vea en el carrito antes de pagar.
 6. **Pago:** instalar el plugin Mercado Pago payments for WooCommerce, conectar la cuenta de Mercado Pago (credenciales de pruebas primero), activar el modo de pruebas (sandbox) y probar un pago antes de pasar a producción. Deja la transferencia bancaria como medio alternativo.
 7. **Páginas:** Tienda, Carrito, Finalizar compra y Mi cuenta, asignadas en WooCommerce, Ajustes, Avanzado.

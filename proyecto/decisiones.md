@@ -42,7 +42,7 @@ Opciones para elegir tus otros plugins según lo que necesite tu sitio. Aquí no
 | 1 | Inicio (obligatoria) | Es la puerta de entrada desde Instagram y donde se capta el correo a cambio de la guía. |
 | 2 | Contacto (obligatoria) | Permite escribir a Brote antes de comprar, con el formulario de Contact Form 7. |
 | 3 | Blog | Los artículos por categoría traen a Camila desde Google y enseñan a cuidar sus plantas. |
-| 4 | Nosotros | Cuenta quién está detrás del local de barrio y da confianza para comprar online. |
+| 4 | Nosotros | Cuenta quién está detrás del local de Villa Alemana y da confianza para comprar online. |
 | 5 | Preguntas frecuentes | Responde las dudas que hoy llegan por mensaje directo (despacho, formatos, retiro). |
 
 **Páginas que dejo para después:** Términos y condiciones, Política de privacidad y 404. Tienda, Ficha de producto y Carrito las crea WooCommerce y las trabajo yo en la fase 1 del tema.
