@@ -4,7 +4,7 @@ Tu tarea es dejar el tema `brotheme-shop` **compatible con los plugins del proye
 
 ## Objetivo
 
-Que el tema funcione sin errores con **Yoast SEO, Contact Form 7, Akismet, Newsletter y All-in-One WP Migration**, conservando el diseño de Brote.
+Que el tema funcione sin errores con **Yoast SEO, Contact Form 7, Akismet, Newsletter, WooCommerce y All-in-One WP Migration**, conservando el diseño de Brote.
 
 ## Entradas
 
@@ -19,7 +19,7 @@ Cambios solo dentro de `brotheme-shop/` y un bloque "Plugins" en el README del r
 ## Reglas (no las rompas)
 
 1. **No instales ni descargues plugins.** Solo prepara el tema. La estudiante los instala desde el panel.
-2. **No toques archivos de plugins** ni `wp-content/plugins/`. Todo ajuste va en el tema.
+2. **No toques archivos de plugins** (ni los de WooCommerce) ni `wp-content/plugins/`. Todo ajuste va en el tema.
 3. **No cambies el diseño.** Si un plugin imprime HTML propio, estilízalo con CSS para que calce; no reescribas la página.
 4. **Nada de rutas ni URL fijas del sitio.** Usa `home_url()`, `get_permalink()` y `get_template_directory_uri()`.
 5. **Escapa todo lo que imprimas:** `esc_html()`, `esc_attr()`, `esc_url()`.
@@ -150,7 +150,53 @@ Corrige cada hallazgo con `home_url()` o `get_template_directory_uri()`.
 **Criterio:** las cuatro revisiones salen limpias.
 **Commit:** `Plugins: tema sin URL fijas para migrar`.
 
-### Hito 7: README y verificación
+### Hito 7: WooCommerce (tienda)
+
+WooCommerce pone los productos, el carrito y el pago; el tema le da el diseño. Las plantillas de la tienda las crea `html-to-theme.md` (hito 6). Aquí verificas la compatibilidad.
+
+1. Confirma en `functions.php` el soporte:
+
+```php
+add_theme_support( 'woocommerce' );
+add_theme_support( 'wc-product-gallery-zoom' );
+add_theme_support( 'wc-product-gallery-lightbox' );
+add_theme_support( 'wc-product-gallery-slider' );
+```
+
+2. Verifica que existan las plantillas de la tienda en `brotheme-shop/woocommerce/` (`archive-product.php`, `content-product.php`, `single-product.php`, `cart/cart.php`) y que conserven los hooks de WooCommerce (`woocommerce_before_main_content`, `woocommerce_after_main_content`, `woocommerce_before_shop_loop`, `woocommerce_single_product_summary`). Si falta un hook, el plugin pierde funciones (migas, precio, botón de agregar al carrito).
+3. Verifica que el botón "Agregar al carrito" y el selector de formato salgan de `woocommerce_template_single_add_to_cart` y no de HTML escrito a mano.
+4. Verifica que el ícono o contador del carrito en `header.php` use `WC()->cart->get_cart_contents_count()` protegido con `function_exists( 'WC' )`, para que el tema no falle si el plugin no está activo:
+
+```php
+<?php if ( function_exists( 'WC' ) && WC()->cart ) : ?>
+	<a class="carrito-enlace" href="<?php echo esc_url( wc_get_cart_url() ); ?>">
+		Carrito (<?php echo esc_html( WC()->cart->get_cart_contents_count() ); ?>)
+	</a>
+<?php endif; ?>
+```
+
+5. Para que el contador se actualice al agregar un producto sin recargar, agrega el fragmento de WooCommerce:
+
+```php
+add_filter( 'woocommerce_add_to_cart_fragments', function ( $fragments ) {
+	ob_start();
+	?>
+	<a class="carrito-enlace" href="<?php echo esc_url( wc_get_cart_url() ); ?>">
+		Carrito (<?php echo esc_html( WC()->cart->get_cart_contents_count() ); ?>)
+	</a>
+	<?php
+	$fragments['a.carrito-enlace'] = ob_get_clean();
+	return $fragments;
+} );
+```
+
+6. Confirma que el tema no carga los JS del prototipo (`tienda.js`, `producto.js`, `productos.js`, `carrito.js`, `buscador.js`).
+7. La búsqueda de productos usa el buscador de WooCommerce: en `header.php` el formulario de búsqueda usa `get_product_search_form()` o un `<form>` con `name="s"` y `<input type="hidden" name="post_type" value="product">`.
+
+**Criterio:** el soporte de WooCommerce está declarado; las plantillas conservan los hooks; el contador usa `function_exists( 'WC' )`; no hay JS del prototipo.
+**Commit:** `Plugins: compatibilidad con WooCommerce`.
+
+### Hito 8: README y verificación
 
 1. Revisa la sintaxis de todos los PHP (`php -l`), si está disponible.
 2. Agrega al README del repo un bloque "Plugins" con lo que la estudiante hace desde el panel:
@@ -158,6 +204,7 @@ Corrige cada hallazgo con `home_url()` o `get_template_directory_uri()`.
    - **Contact Form 7:** crear el formulario con título `Contacto` y pegar el contenido de `contacto-cf7.txt`; poner el correo del emprendimiento en "Para".
    - **Akismet:** activar y conectar una clave gratuita (uso personal).
    - **Newsletter:** crear el formulario de suscripción, activar la casilla de consentimiento y la confirmación por correo; poner el enlace de la guía y el código del 10 % en el mensaje de "gracias".
+   - **WooCommerce:** seguir `proyecto/context/woocommerce-config.md` (país y moneda, categorías, atributos, productos variables, despacho, pago y páginas).
    - **All-in-One WP Migration:** exportar a archivo (`.wpress`) al cerrar cada etapa; para reinstalar, instalar WordPress limpio y el mismo plugin e importar el archivo.
 3. Agrega la nota del correo en InfinityFree (abajo).
 
@@ -180,7 +227,7 @@ El hosting limita el correo que sale del servidor. No puedes arreglarlo desde el
 | Joinchat (WhatsApp) | Verificar `wp_footer()` |
 | WP Super Cache | Verificar que estilos y scripts estén bien encolados |
 | Smush o EWWW Image Optimizer | Nada en el tema; las imágenes de contenido van a la biblioteca de medios |
-| Relevanssi | Agregar `searchform.php` (o `get_search_form()`) y `search.php` con el diseño del buscador |
+| Relevanssi | Mejora la búsqueda de artículos del blog; la de productos ya la hace WooCommerce. Agregar `searchform.php` y `search.php` con el diseño del buscador |
 | CookieYes | Verificar `wp_footer()` |
 
 ## Cuándo detenerte y preguntar

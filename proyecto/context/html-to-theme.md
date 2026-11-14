@@ -4,13 +4,13 @@ Tu tarea es convertir el sitio HTML estático de **Brote** en un **tema clásico
 
 ## Objetivo
 
-Producir la carpeta `brotheme-shop/` que se pueda comprimir en un `.zip`, subir a WordPress (Apariencia, Temas, Añadir nuevo) y activar sin errores, con el mismo diseño que `proyecto/html/`.
+Producir la carpeta `brotheme-shop/` que se pueda comprimir en un `.zip`, subir a WordPress (Apariencia, Temas, Añadir nuevo) y activar sin errores, con el mismo diseño que `proyecto/html/`. La tienda (catálogo, ficha de producto, carrito y pago) funciona con **WooCommerce**: el tema le da el diseño, y WooCommerce pone los productos, el carrito y el pago.
 
 ## Entradas
 
 - `proyecto/html/`: sitio fuente. Contiene `*.html`, `css/styles.css`, `js/*.js` e `img/`. Es la fuente de verdad del diseño.
 - `tema-base/`: tema en blanco. Es el punto de partida (`header.php`, `footer.php`, `front-page.php`, `index.php`, `page.php`, `single.php`, `archive.php`, `functions.php`, `style.css`).
-- `proyecto/context/plugins.md`: qué debe cumplir el tema para ser compatible con los plugins. Léelo antes del paso 5.
+- `proyecto/context/plugins.md`: qué debe cumplir el tema para ser compatible con los plugins, incluido WooCommerce. Léelo antes del hito 5.
 - `DESIGN.md` y `PRODUCT.md` del proyecto, si existen: colores, tipografías y tono.
 
 ## Salida
@@ -29,10 +29,8 @@ brotheme-shop/
 ├── archive.php
 ├── page.php
 ├── page-contacto.php
-├── page-tienda.php
-├── page-producto.php
-├── page-carrito.php
 ├── 404.php
+├── woocommerce/        (plantillas de la tienda, ver hito 6)
 └── assets/
     ├── css/styles.css
     ├── js/
@@ -43,7 +41,7 @@ brotheme-shop/
 
 1. **No rediseñes.** Conserva el HTML, las clases y el CSS tal como están. Cambia solo lo que WordPress debe generar.
 2. **No uses Elementor, constructores visuales ni temas de pago.** Solo PHP, HTML, CSS y JS propios.
-3. **No instales librerías ni frameworks nuevos.** Sin Composer ni npm.
+3. **No instales librerías ni frameworks nuevos.** Sin Composer ni npm. La única excepción es el plugin WooCommerce, que instala la estudiante desde el panel. No reimplementes la tienda: usa el carrito, el catálogo y el pago de WooCommerce, y no cargues los JS del prototipo (`tienda.js`, `producto.js`, `productos.js`, `carrito.js`, `buscador.js`).
 4. **No toques `proyecto/html/`.** Es la fuente: léela, no la modifiques.
 5. **No inventes contenido.** El texto de las páginas va en WordPress (`the_content()`); las plantillas solo traen la estructura.
 6. **Nada de rutas fijas.** Prohibido `img/...`, `/img/...`, `http://...` del sitio o enlaces que terminen en `.html`. Usa siempre `get_template_directory_uri()`, `home_url()` o `get_permalink()`.
@@ -83,7 +81,7 @@ Text Domain: brotheme-shop
 2. Copia los archivos de `proyecto/html/js/` a `brotheme-shop/assets/js/`.
 3. Copia a `brotheme-shop/assets/img/` solo las imágenes del diseño que el CSS o las plantillas usan (logos, íconos, fondos). No copies fotos de contenido: esas van a la biblioteca de medios.
 4. En el CSS, reescribe cualquier `url(...)` para que apunte a `../img/...`.
-5. En `functions.php`, carga todo con `wp_enqueue_style` y `wp_enqueue_script`, con versión (`wp_get_theme()->get( 'Version' )`). Carga cada JS solo en la página que lo usa (`is_page( 'tienda' )`, etc.).
+5. En `functions.php`, carga todo con `wp_enqueue_style` y `wp_enqueue_script`, con versión (`wp_get_theme()->get( 'Version' )`). Carga cada JS solo en la página que lo usa. No cargues los JS del prototipo de tienda (`tienda.js`, `producto.js`, `productos.js`, `carrito.js`, `buscador.js`): WooCommerce los reemplaza.
 
 **Criterio:** ninguna ruta del CSS apunta fuera de `assets/`; los scripts se cargan con `wp_enqueue_script`, no con `<script>` pegado.
 **Commit:** `Tema: estilos, scripts e imágenes`.
@@ -121,15 +119,58 @@ Cada plantilla empieza con `get_header()` y termina con `get_footer()`. Si no ha
 |---|---|---|
 | `nosotros.html`, `preguntas-frecuentes.html`, `terminos.html`, `privacidad.html` | `page.php` | `the_title()` y `the_content()`; si el diseño de una página es distinto, crea `page-{slug}.php` |
 | `contacto.html` | `page-contacto.php` | Deja el lugar del formulario con `<?php echo do_shortcode( '[contact-form-7 title="Contacto"]' ); ?>` |
-| `tienda.html`, `producto.html`, `carrito.html` | `page-tienda.php`, `page-producto.php`, `page-carrito.php` | Prototipo: conserva el HTML y carga su JS desde `assets/js/`. No agregues WooCommerce |
+| `tienda.html`, `producto.html`, `carrito.html` | `woocommerce/…` | No se hacen aquí: van en el hito 6 con WooCommerce |
 | `404.html` | `404.php` | Contenido fijo del diseño |
 
 Sigue lo que pide `proyecto/context/plugins.md` para el formulario y los comentarios.
 
-**Criterio:** cada página del diseño tiene plantilla; no queda ningún enlace que termine en `.html`.
+**Criterio:** cada página del diseño, salvo la tienda, tiene plantilla; no queda ningún enlace que termine en `.html`.
 **Commit:** `Tema: páginas y plantillas`.
 
-### Hito 6: enlaces
+### Hito 6: tienda con WooCommerce
+
+El diseño de `tienda.html`, `producto.html` y `carrito.html` se traspasa a las plantillas de WooCommerce. Los datos (productos, precios, formatos, carrito, pago) los pone WooCommerce, no el tema.
+
+1. En `functions.php`, declara el soporte:
+
+```php
+function brotheme_woocommerce() {
+	add_theme_support( 'woocommerce' );
+	add_theme_support( 'wc-product-gallery-zoom' );
+	add_theme_support( 'wc-product-gallery-lightbox' );
+	add_theme_support( 'wc-product-gallery-slider' );
+}
+add_action( 'after_setup_theme', 'brotheme_woocommerce' );
+```
+
+2. Crea `brotheme-shop/woocommerce/` y copia ahí solo las plantillas que necesitas cambiar, con el mismo nombre y subcarpeta que en el plugin. Parte de las plantillas originales de WooCommerce (carpeta `templates/` del plugin, si está instalado) y conserva sus llamadas y hooks; cambia solo el HTML y las clases para igualar el diseño.
+
+| Fuente | Plantilla de WooCommerce | Notas |
+|---|---|---|
+| `tienda.html` | `woocommerce/archive-product.php` y `woocommerce/content-product.php` | Cabecera, categorías, migas, orden y tarjetas de producto del diseño |
+| `producto.html` | `woocommerce/single-product.php` y `woocommerce/content-single-product.php` | Galería, precio, selector de formato (producto variable), acordeones y relacionados |
+| `carrito.html` | `woocommerce/cart/cart.php`, `woocommerce/cart/cart-empty.php` y `woocommerce/cart/cart-totals.php` | Líneas con cantidades, resumen, estado vacío y sugerencias |
+| Pago | `woocommerce/checkout/form-checkout.php` | Solo si el diseño del pago está definido; si no, déjalo con el estilo base |
+
+3. Si el contenedor de WooCommerce no calza con el diseño, reemplaza los envoltorios en `functions.php`:
+
+```php
+remove_action( 'woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10 );
+remove_action( 'woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10 );
+add_action( 'woocommerce_before_main_content', function () { echo '<main class="contenedor">'; }, 10 );
+add_action( 'woocommerce_after_main_content', function () { echo '</main>'; }, 10 );
+```
+
+Usa la clase del contenedor real del HTML original.
+
+4. Pasa el CSS de la tienda del diseño a `assets/css/styles.css` y estiliza los elementos que WooCommerce imprime con sus clases (`.woocommerce`, `.products`, `.product`, `.price`, `.button`, `.woocommerce-message`, `.cart_totals`, `.quantity`). Si el CSS de WooCommerce choca con el diseño, sobrescríbelo desde tu CSS; no lo desactives completo.
+5. Escribe `proyecto/context/woocommerce-config.md` con la configuración del panel (ver "Configuración de WooCommerce en el panel" más abajo). No la hagas en código.
+6. Sigue lo que pide `proyecto/context/plugins.md` para WooCommerce.
+
+**Criterio:** `add_theme_support( 'woocommerce' )` está presente; existen las plantillas de la tabla con las clases del diseño; no se carga ningún JS del prototipo de tienda; no hay un carrito ni un pago hechos a mano.
+**Commit:** `Tema: tienda con WooCommerce`.
+
+### Hito 7: enlaces
 
 1. Busca en todo `brotheme-shop/` cualquier `.html"` y cualquier `img/` o `css/` sin prefijo de WordPress.
 2. Reemplaza:
@@ -138,19 +179,21 @@ Sigue lo que pide `proyecto/context/plugins.md` para el formulario y los comenta
 |---|---|
 | `index.html` | `<?php echo esc_url( home_url( '/' ) ); ?>` |
 | `contacto.html` | `<?php echo esc_url( home_url( '/contacto/' ) ); ?>` |
-| `tienda.html?cat=sustratos` | `<?php echo esc_url( home_url( '/tienda/?cat=sustratos' ) ); ?>` |
+| `tienda.html` | `<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>` |
+| `tienda.html?cat=sustratos` | `<?php echo esc_url( get_term_link( 'sustratos', 'product_cat' ) ); ?>` |
+| `carrito.html` | `<?php echo esc_url( wc_get_cart_url() ); ?>` |
 
 3. Los JS que leen `location` o rutas relativas deben seguir funcionando con las URL nuevas; revísalos y ajusta solo lo necesario.
 
 **Criterio:** `grep -rn '\.html"' brotheme-shop/` no devuelve resultados.
 **Commit:** `Tema: enlaces de WordPress`.
 
-### Hito 7: verificación y entrega
+### Hito 8: verificación y entrega
 
 1. Revisa la sintaxis de todos los PHP (`php -l`), si está disponible.
 2. Revisa que no haya `<?php` sin cerrar, ni llaves o etiquetas HTML desbalanceadas.
 3. Genera `brotheme-shop.zip` con la carpeta `brotheme-shop/` dentro (la carpeta, no su contenido suelto).
-4. Escribe en el README del repo, en pocas líneas: nombre del tema, cómo instalarlo y las páginas que hay que crear con su slug (`contacto`, `tienda`, `producto`, `carrito`, `nosotros`, `preguntas-frecuentes`, `terminos`, `privacidad`).
+4. Escribe en el README del repo, en pocas líneas: nombre del tema, cómo instalarlo y las páginas que hay que crear con su slug (`contacto`, `nosotros`, `preguntas-frecuentes`, `terminos`, `privacidad`). Las páginas Tienda, Carrito, Finalizar compra y Mi cuenta las crea WooCommerce al activarse y se asignan en WooCommerce, Ajustes, Avanzado.
 
 **Criterio:** todos los PHP pasan la revisión y el `.zip` tiene `style.css` en `brotheme-shop/style.css`.
 **Commit:** `Tema: verificación y entrega`.
@@ -161,9 +204,22 @@ Detente y pregunta a la estudiante, sin adivinar, si:
 
 - una página del HTML no encaja con ninguna plantilla de la tabla;
 - un JS depende de datos que no existen en WordPress y no sabes cómo reemplazarlos;
+- el diseño de la tienda pide algo que WooCommerce no hace con sus plantillas y hooks (por ejemplo, un cálculo de despacho propio);
 - necesitas un plugin o librería que no está en `proyecto/context/plugins.md`;
 - tienes que cambiar el diseño (colores, tipografías, estructura) para que funcione.
 
 ## Al terminar
 
-Entrega un resumen corto con: los archivos creados, lo que quedó como prototipo y no es funcional (tienda, producto y carrito), lo que no pudiste verificar sin WordPress instalado, y cualquier duda abierta.
+Entrega un resumen corto con: los archivos creados, lo que quedó pendiente de configurar en WooCommerce (productos, categorías, despacho y pago), lo que no pudiste verificar sin WordPress instalado, y cualquier duda abierta.
+
+## Configuración de WooCommerce en el panel
+
+Esto no se puede dejar en código. Déjalo escrito en `proyecto/context/woocommerce-config.md` para hacerlo después de instalar WooCommerce.
+
+1. **Asistente inicial:** país Chile, moneda peso chileno (CLP), sin plugins extra en el asistente.
+2. **Categorías de producto:** Sustratos, Fertilizantes, Plagas y enfermedades, Herramientas, Maceteros e Insumos.
+3. **Atributo "Tipo de planta"** (interior, exterior, suculentas, huerto): sirve para filtrar y para mostrar para qué plantas sirve cada producto.
+4. **Productos variables:** el formato (5 L, 10 L, 20 L) es un atributo "Formato" usado para variaciones, cada una con su precio.
+5. **Despacho:** zonas de envío con tarifa fija por región y la opción "Retiro en tienda" del local, para que el costo se vea en el carrito antes de pagar.
+6. **Pago:** transferencia bancaria para empezar; Webpay o Mercado Pago quedan como mejora con su plugin oficial.
+7. **Páginas:** Tienda, Carrito, Finalizar compra y Mi cuenta, asignadas en WooCommerce, Ajustes, Avanzado.
