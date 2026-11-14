@@ -2,7 +2,7 @@
 
 ## Proto-persona principal
 
-![Avatar ilustrado de Camila](img/camila.svg)
+![Camila Rojas, con una suculenta que se le está muriendo, en su departamento](img/camila-brote.png)
 
 **Camila Rojas, 29 años.** Diseñadora gráfica, trabaja en una oficina en Viña del Mar y vive en un departamento con balcón en Quilpué.
 
@@ -34,6 +34,8 @@
 - Descubrir un despacho caro recién al final de la compra.
 
 ## Segunda proto-persona (opcional)
+
+![Jorge Muñoz, con una pala de jardín en el patio de su casa](img/jorge-brote.png)
 
 **Jorge Muñoz, 42 años.** Vive en su casa propia con patio en Villa Alemana, y quiere empezar a jardinear. El clima del interior le mata todas las plantas.
 
